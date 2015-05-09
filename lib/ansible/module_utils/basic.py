@@ -3,27 +3,27 @@
 # Modules you write using this snippet, which is embedded dynamically by Ansible
 # still belong to the author of the module, and may assign their own license
 # to the complete work.
-# 
+#
 # Copyright (c), Michael DeHaan <michael.dehaan@gmail.com>, 2012-2013
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification, 
+# Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright 
+#    * Redistributions of source code must retain the above copyright
 #      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice, 
-#      this list of conditions and the following disclaimer in the documentation 
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
@@ -116,7 +116,7 @@ except ImportError:
 try:
     from ast import literal_eval as _literal_eval
 except ImportError:
-    # a replacement for literal_eval that works with python 2.4. from: 
+    # a replacement for literal_eval that works with python 2.4. from:
     # https://mail.python.org/pipermail/python-list/2009-September/551880.html
     # which is essentially a cut/past from an earlier (2.6) version of python's
     # ast.py
@@ -347,9 +347,9 @@ class AnsibleModule(object):
         self.check_mode = False
         self.no_log = no_log
         self.cleanup_files = []
-        
+
         self.aliases = {}
-        
+
         if add_file_common_args:
             for k, v in FILE_COMMON_ARGUMENTS.iteritems():
                 if k not in self.argument_spec:
@@ -362,7 +362,7 @@ class AnsibleModule(object):
         (self.params, self.args) = self._load_params()
 
         self._legal_inputs = ['CHECKMODE', 'NO_LOG']
-        
+
         self.aliases = self._handle_aliases()
 
         if check_invalid_arguments:
@@ -370,7 +370,7 @@ class AnsibleModule(object):
         self._check_for_check_mode()
         self._check_for_no_log()
 
-        # check exclusive early 
+        # check exclusive early
         if not bypass_checks:
             self._check_mutually_exclusive(mutually_exclusive)
 
@@ -707,14 +707,14 @@ class AnsibleModule(object):
             else:
                 raise ValueError("bad symbolic permission for mode: %s" % mode)
         return new_mode
-    
+
     def _apply_operation_to_mode(self, user, operator, mode_to_apply, current_mode):
         if operator  ==  '=':
             if user == 'u': mask = stat.S_IRWXU | stat.S_ISUID
             elif user == 'g': mask = stat.S_IRWXG | stat.S_ISGID
             elif user == 'o': mask = stat.S_IRWXO | stat.S_ISVTX
-            
-            # mask out u, g, or o permissions from current_mode and apply new permissions   
+
+            # mask out u, g, or o permissions from current_mode and apply new permissions
             inverse_mask = mask ^ 07777
             new_mode = (current_mode & inverse_mask) | mode_to_apply
         elif operator == '+':
@@ -722,10 +722,10 @@ class AnsibleModule(object):
         elif operator == '-':
             new_mode = current_mode - (current_mode & mode_to_apply)
         return new_mode
-        
+
     def _get_octal_mode_from_symbolic_perms(self, path_stat, user, perms):
         prev_mode = stat.S_IMODE(path_stat.st_mode)
-        
+
         is_directory = stat.S_ISDIR(path_stat.st_mode)
         has_x_permissions = (prev_mode & 00111) > 0
         apply_X_permission = is_directory or has_x_permissions
@@ -883,7 +883,7 @@ class AnsibleModule(object):
                 aliases_results[alias] = k
                 if alias in self.params:
                     self.params[k] = self.params[alias]
-        
+
         return aliases_results
 
     def _check_for_check_mode(self):
@@ -1154,7 +1154,7 @@ class AnsibleModule(object):
                 raise
             return cwd
         except:
-            # we don't have access to the cwd, probably because of sudo. 
+            # we don't have access to the cwd, probably because of sudo.
             # Try and move to a neutral location to prevent errors
             for cwd in [os.path.expandvars('$HOME'), tempfile.gettempdir()]:
                 try:
@@ -1163,9 +1163,9 @@ class AnsibleModule(object):
                         return cwd
                 except:
                     pass
-        # we won't error here, as it may *not* be a problem, 
+        # we won't error here, as it may *not* be a problem,
         # and we don't want to break modules unnecessarily
-        return None    
+        return None
 
     def get_bin_path(self, arg, required=False, opt_dirs=[]):
         '''
@@ -1496,7 +1496,7 @@ class AnsibleModule(object):
             close_fds=close_fds,
             stdin=st_in,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE 
+            stderr=subprocess.PIPE
         )
 
         if path_prefix:
@@ -1577,6 +1577,21 @@ class AnsibleModule(object):
         os.chdir(prev_dir)
 
         return (rc, stdout, stderr)
+
+    def validate_config_file(self, validation_cmd, config_file):
+        '''
+        Checks whether `config_file` is valid according to `validation_cmd`. If
+        the validation command does not contain the file to be checked, or if
+        the validation failed, execution stops and an error message is printed.
+        '''
+        if "%s" not in validation_cmd:
+            self.fail_json(
+                msg="validate must contain %%s: %s" % (validation_cmd))
+        (rc, out, err) = self.run_command(validation_cmd % config_file)
+        if rc != 0:
+            self.fail_json(
+                msg="failed to validate:\nrc: %s\nerror: %s\noutput: %s" %
+                (rc, err, out))
 
     def append_to_file(self, filename, str):
         filename = os.path.expandvars(os.path.expanduser(filename))
